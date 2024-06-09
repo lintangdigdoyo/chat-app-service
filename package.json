@@ -1,7 +1,7 @@
 {
   "name": "chat-app-service",
   "version": "1.0.0",
-  "description": "",
+  "description": "Chat app service",
   "main": "dist/server.js",
   "scripts": {
     "dev": "nodemon src/server.ts",
@@ -17,7 +17,7 @@
       "eslint src --max-warnings=0"
     ],
     "**/*.{json,js,ts,jsx,tsx,html}": [
-      "prettier -w ./src/*"
+      "prettier -w"
     ]
   },
   "keywords": [],
