@@ -1,0 +1,91 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String      @id @default(uuid())
+  name       String      @db.VarChar(255)
+  username   String      @unique @db.VarChar(255)
+  email      String      @unique @db.VarChar(255)
+  password   String      @db.VarChar(255)
+  chats      Chat[]
+  friends    Friend[]    @relation("UserFriends")
+  friend_of  Friend[]    @relation("UserFriendsReverse")
+  groups     UserGroup[]
+  created_at DateTime    @default(now())
+  updated_at DateTime    @default(now())
+
+  @@map("users")
+}
+
+model Friend {
+  user_id   String
+  friend_id String
+  user      User   @relation("UserFriends", fields: [user_id], references: [id])
+  friend    User   @relation("UserFriendsReverse", fields: [friend_id], references: [id])
+
+  @@id([user_id, friend_id])
+  @@map("friends")
+}
+
+model Chat {
+  id         String   @id @default(uuid())
+  message    String
+  status     Status   @default(Pending)
+  user       User     @relation(fields: [user_id], references: [id])
+  user_id    String   @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+
+  @@map("chats")
+}
+
+model Group {
+  id         String      @id @default(uuid())
+  name       String      @db.VarChar(255)
+  user_id    String?
+  users      UserGroup[]
+  channels   Channel[]
+  created_at DateTime    @default(now())
+  updated_at DateTime    @default(now())
+
+  @@map("groups")
+}
+
+model UserGroup {
+  user     User   @relation(fields: [user_id], references: [id])
+  user_id  String
+  group    Group  @relation(fields: [group_id], references: [id])
+  group_id String
+
+  @@id([user_id, group_id])
+  @@map("user_groups")
+}
+
+model Channel {
+  id         String   @id @default(uuid())
+  name       String   @unique @db.VarChar(255)
+  group      Group    @relation(fields: [group_id], references: [id])
+  group_id   String   @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+
+  @@map("channels")
+}
+
+enum Status {
+  Pending
+  Sent
+  Read
+}
