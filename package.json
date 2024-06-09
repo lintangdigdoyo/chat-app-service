@@ -6,7 +6,18 @@
   "scripts": {
     "dev": "nodemon src/server.ts",
     "start": "node dist/server.js",
-    "build": "tsc"
+    "build": "tsc",
+    "format": "prettier -w .",
+    "format:check": "prettier -c ./src/*",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "**/*.{js, jsx,ts,tsx}": [
+      "eslint --max-warnings=0"
+    ],
+    "**/*.{json,js,ts,jsx,tsx,html}": [
+      "prettier --w"
+    ]
   },
   "keywords": [],
   "author": "Lintang Digdoyo",
@@ -18,7 +29,15 @@
     "ts-node": "^10.9.2"
   },
   "devDependencies": {
+    "@eslint/js": "^9.4.0",
     "@types/express": "^4.17.21",
-    "typescript": "^5.4.5"
+    "eslint": "9.x",
+    "eslint-config-prettier": "^9.1.0",
+    "globals": "^15.4.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.5",
+    "prettier": "^3.3.1",
+    "typescript": "^5.4.5",
+    "typescript-eslint": "^7.12.0"
   }
 }
