@@ -1,6 +1,6 @@
 import express from "express"
 
-import * as publicController from "@/controllers/public-controllers"
+import * as publicController from "@/controllers/public.controller"
 
 const router = express.Router()
 
