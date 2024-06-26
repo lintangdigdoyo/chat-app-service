@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes"
 
-export class ErrorException extends Error {
+class ErrorException extends Error {
   status: number
 
   constructor(message = "Bad Request", code = StatusCodes.BAD_REQUEST) {
@@ -8,3 +8,5 @@ export class ErrorException extends Error {
     this.status = code
   }
 }
+
+export default ErrorException
