@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken"
 import { prismaClient } from "@/config/database"
 import ErrorException from "@/exceptions/ErrorException"
 import { StatusCodes } from "http-status-codes"
-import { env } from "@/config/config"
+import { env } from "@/config/env"
 import {
   generateAccessToken,
   generateRefreshToken,

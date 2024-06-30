@@ -1,7 +1,7 @@
 import "module-alias/register"
 
 import app from "./app"
-import { env } from "@/config/config"
+import { env } from "@/config/env"
 
 const PORT = env.APP_PORT
 

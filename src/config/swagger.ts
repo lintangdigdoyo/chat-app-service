@@ -1,7 +1,7 @@
 import swaggerJSDoc from "swagger-jsdoc"
 import swaggerUi from "swagger-ui-express"
 import { Express } from "express"
-import { env } from "./config"
+import { env } from "./env"
 
 const swaggerOptions: swaggerJSDoc.Options = {
   swaggerDefinition: {
@@ -18,7 +18,7 @@ const swaggerOptions: swaggerJSDoc.Options = {
       },
     ],
   },
-  apis: ["./src/routes/**/*.ts"],
+  apis: ["./dist/routes/**/*.js"],
 }
 
 const swaggerDocs = swaggerJSDoc(swaggerOptions)

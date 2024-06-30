@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken"
 
-import { env } from "@/config/config"
+import { env } from "@/config/env"
 import redis from "@/config/redis"
 import { UserAccessTokenData } from "@/types/user.type"
 

@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
 import { StatusCodes } from "http-status-codes"
 
-import { env } from "@/config/config"
+import { env } from "@/config/env"
 
 export default class PublicController {
   static async main(_req: Request, res: Response) {

@@ -2,7 +2,7 @@ import { Request, RequestHandler } from "express"
 import { StatusCodes } from "http-status-codes"
 import jwt from "jsonwebtoken"
 
-import { env } from "@/config/config"
+import { env } from "@/config/env"
 import { UserAccessTokenData } from "@/types/user.type"
 
 const auth: RequestHandler = (req: Request, res, next) => {
