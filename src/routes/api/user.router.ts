@@ -3,6 +3,7 @@ import express from "express"
 import UserController from "@/controllers/user.controller"
 import validate from "@/middlewares/validate"
 import { userSchema, loginSchema } from "@/schemas/user.schema"
+import auth from "@/middlewares/auth"
 
 const router = express.Router()
 
@@ -62,9 +63,14 @@ router.post("/", validate(userSchema), UserController.create)
  *             schema:
  *               type: object
  *               properties:
- *                 accessToken:
- *                   type: string
- *                   description: access token
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     accessToken:
+ *                       type: string
+ *                       description: access token
+ *                     user:
+ *                       $ref: '#/components/schemas/User'
  *
  */
 router.post("/login", validate(loginSchema), UserController.login)
@@ -113,11 +119,51 @@ router.post("/logout", UserController.logout)
  *             schema:
  *               type: object
  *               properties:
- *                 accessToken:
- *                   type: string
- *                   description: access token
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     accessToken:
+ *                       type: string
+ *                       description: access token
  *
  */
 router.post("/refresh", UserController.refresh)
+
+/**
+ * @swagger
+ * /v1/users/friends/{id}:
+ *   post:
+ *     summary: Make a friend request
+ *     description: Make a friend request to another user
+ *     tags:
+ *       - User
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: friend's user id
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Message status
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   description: http status code
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   description: add friend message status
+ *                   example: User added successfully
+ *
+ */
+router.post("/friends/:id", auth, UserController.addFriend)
 
 export default router

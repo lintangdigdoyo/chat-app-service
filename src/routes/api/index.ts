@@ -13,6 +13,7 @@ const router = express.Router()
  *       properties:
  *         id:
  *           type: string
+ *           readOnly: true
  *           description: id of the user
  *           example: b56ee8a8-b842-4c2f-8e59-86bd0ee9ef3c
  *         name:
@@ -29,6 +30,7 @@ const router = express.Router()
  *           example: john@mail.com
  *         password:
  *           type: string
+ *           writeOnly: true
  *           description: password of the user
  *           example: passw0rd
  *     CreateUserRequest:
@@ -40,9 +42,6 @@ const router = express.Router()
  *             - username
  *             - email
  *             - password
- *           properties:
- *             id:
- *               readOnly: true
  *     UserLoginRequest:
  *       allOf:
  *         - $ref: '#/components/schemas/User'
@@ -51,8 +50,6 @@ const router = express.Router()
  *             - email
  *             - password
  *           properties:
- *             id:
- *               readOnly: true
  *             username:
  *               readOnly: true
  *             name:

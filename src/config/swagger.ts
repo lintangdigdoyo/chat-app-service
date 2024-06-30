@@ -11,6 +11,15 @@ const swaggerOptions: swaggerJSDoc.Options = {
       version: "0.1.0",
       description: "REST API Chat App Service",
     },
+    components: {
+      securitySchemes: {
+        BearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
     servers: [
       {
         url: env.APP_URL,

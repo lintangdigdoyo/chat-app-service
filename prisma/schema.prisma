@@ -32,8 +32,9 @@ model User {
 model Friend {
   user_id   String
   friend_id String
-  user      User   @relation("UserFriends", fields: [user_id], references: [id])
-  friend    User   @relation("UserFriendsReverse", fields: [friend_id], references: [id])
+  user      User    @relation("UserFriends", fields: [user_id], references: [id])
+  friend    User    @relation("UserFriendsReverse", fields: [friend_id], references: [id])
+  accepted  Boolean @default(false)
 
   @@id([user_id, friend_id])
   @@map("friends")

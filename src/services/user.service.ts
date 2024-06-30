@@ -76,7 +76,7 @@ export default class UserService {
     const accessToken = generateAccessToken(userData)
     const refreshToken = generateRefreshToken(userData)
 
-    return { accessToken, refreshToken }
+    return { accessToken, refreshToken, user: userData }
   }
 
   static async logout(refreshToken: string) {
@@ -138,5 +138,37 @@ export default class UserService {
     } catch (err) {
       throw new ErrorException("Forbidden", StatusCodes.FORBIDDEN)
     }
+  }
+
+  static async addFriend(userId: string, friendId: string) {
+    const user = await prismaClient.user.findUnique({
+      where: {
+        id: friendId,
+      },
+    })
+
+    if (!user) {
+      throw new ErrorException("User not found", StatusCodes.NOT_FOUND)
+    }
+
+    const friend = await prismaClient.friend.findFirst({
+      where: {
+        AND: { user_id: userId, friend_id: friendId },
+      },
+    })
+
+    if (friend) {
+      throw new ErrorException("User already added as a friend")
+    }
+
+    await prismaClient.friend.create({
+      data: {
+        friend_id: friendId,
+        user_id: userId,
+        accepted: false,
+      },
+    })
+
+    return { message: "User added successfully" }
   }
 }

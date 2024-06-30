@@ -23,14 +23,19 @@ export default class UserController {
     try {
       const userAuthData = req.body
 
-      const { accessToken, refreshToken } = await UserService.login(userAuthData)
+      const { accessToken, refreshToken, user } = await UserService.login(userAuthData)
 
       res.cookie("refresh_token", refreshToken, {
         httpOnly: true,
         maxAge: 7 * 24 * 60 * 60 * 1000,
       })
 
-      res.status(StatusCodes.OK).json({ accessToken })
+      res.status(StatusCodes.OK).json({
+        data: {
+          accessToken,
+          user,
+        },
+      })
     } catch (err) {
       next(err)
     }
@@ -50,7 +55,7 @@ export default class UserController {
         maxAge: 7 * 24 * 60 * 60 * 1000,
       })
 
-      res.status(StatusCodes.OK).json({ accessToken })
+      res.status(StatusCodes.OK).json({ data: { accessToken } })
     } catch (err) {
       next(err)
     }
@@ -65,6 +70,27 @@ export default class UserController {
       }
 
       const { message } = await UserService.logout(refreshToken)
+
+      res.status(StatusCodes.OK).json({ status: StatusCodes.OK, message })
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  static async addFriend(req: Request, res: Response, next: NextFunction) {
+    try {
+      const friendId = req.params.id
+      const userId = req.user?.id
+
+      if (friendId === userId) {
+        throw new ErrorException("Cannot add user with the same id")
+      }
+
+      if (!userId) {
+        throw new ErrorException("Unauthorized", StatusCodes.UNAUTHORIZED)
+      }
+
+      const { message } = await UserService.addFriend(userId, friendId)
 
       res.status(StatusCodes.OK).json({ status: StatusCodes.OK, message })
     } catch (err) {
