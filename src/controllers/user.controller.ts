@@ -1,72 +1,72 @@
-import { RequestHandler } from "express"
+import { NextFunction, Request, Response } from "express"
 import { StatusCodes } from "http-status-codes"
 
-import * as userService from "@/services/user.service"
+import UserService from "@/services/user.service"
 import ErrorException from "@/exceptions/ErrorException"
 
-export const create: RequestHandler = async (req, res, next) => {
-  try {
-    const user = req.body
+export default class UserController {
+  static async create(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user = req.body
 
-    const result = await userService.create(user)
+      const result = await UserService.create(user)
 
-    res.status(StatusCodes.CREATED).json({ data: result })
-  } catch (err) {
-    next(err)
-  }
-}
-
-export const login: RequestHandler = async (req, res, next) => {
-  try {
-    const userAuthData = req.body
-
-    const { accessToken, refreshToken } = await userService.login(userAuthData)
-
-    res.cookie("refresh_token", refreshToken, {
-      httpOnly: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    })
-
-    res.status(StatusCodes.OK).json({ accessToken })
-  } catch (err) {
-    next(err)
-  }
-}
-
-export const refresh: RequestHandler = async (req, res, next) => {
-  try {
-    const token = req.cookies?.refresh_token
-    if (!token) {
-      throw new ErrorException("Unauthorized", StatusCodes.UNAUTHORIZED)
+      res.status(StatusCodes.CREATED).json({ data: result })
+    } catch (err) {
+      next(err)
     }
-
-    const { accessToken, refreshToken } = await userService.refresh(token)
-
-    res.cookie("refresh_token", refreshToken, {
-      httpOnly: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    })
-
-    res.status(StatusCodes.OK).json({ accessToken })
-  } catch (err) {
-    next(err)
   }
-}
 
-export const logout: RequestHandler = async (req, res, next) => {
-  try {
-    const authHeader = req.headers.authorization
-    const token = authHeader?.split(" ")[1]
-    const refreshToken = req.cookies?.refresh_token
+  static async login(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userAuthData = req.body
 
-    if (!token || !refreshToken) {
-      throw new ErrorException("Unauthorized", StatusCodes.UNAUTHORIZED)
+      const { accessToken, refreshToken } = await UserService.login(userAuthData)
+
+      res.cookie("refresh_token", refreshToken, {
+        httpOnly: true,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      })
+
+      res.status(StatusCodes.OK).json({ accessToken })
+    } catch (err) {
+      next(err)
     }
+  }
 
-    const { message } = await userService.logout(token, refreshToken)
+  static async refresh(req: Request, res: Response, next: NextFunction) {
+    try {
+      const token = req.cookies?.refresh_token
+      if (!token) {
+        throw new ErrorException("Unauthorized", StatusCodes.UNAUTHORIZED)
+      }
 
-    res.status(StatusCodes.OK).json({ message })
-  } catch (err) {
-    next(err)
+      const { accessToken, refreshToken } = await UserService.refresh(token)
+
+      res.cookie("refresh_token", refreshToken, {
+        httpOnly: true,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      })
+
+      res.status(StatusCodes.OK).json({ accessToken })
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  static async logout(req: Request, res: Response, next: NextFunction) {
+    try {
+      const refreshToken = req.cookies?.refresh_token
+
+      if (!refreshToken) {
+        throw new ErrorException("Unauthorized", StatusCodes.UNAUTHORIZED)
+      }
+
+      const { message } = await UserService.logout(refreshToken)
+
+      res.status(StatusCodes.OK).json({ message })
+    } catch (err) {
+      next(err)
+    }
   }
 }
