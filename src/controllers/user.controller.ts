@@ -9,9 +9,11 @@ export default class UserController {
     try {
       const user = req.body
 
-      const result = await UserService.create(user)
+      await UserService.create(user)
 
-      res.status(StatusCodes.CREATED).json({ data: result })
+      res
+        .status(StatusCodes.CREATED)
+        .json({ status: StatusCodes.CREATED, message: "User created successfully" })
     } catch (err) {
       next(err)
     }
@@ -64,7 +66,7 @@ export default class UserController {
 
       const { message } = await UserService.logout(refreshToken)
 
-      res.status(StatusCodes.OK).json({ message })
+      res.status(StatusCodes.OK).json({ status: StatusCodes.OK, message })
     } catch (err) {
       next(err)
     }

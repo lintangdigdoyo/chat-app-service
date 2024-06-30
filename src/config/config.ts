@@ -7,7 +7,7 @@ export const env = {
   APP_NAME: process.env.APP_NAME,
   APP_VERSION: process.env.APP_VERSION,
   APP_PORT: process.env.APP_PORT || 8080,
-  APP_URL: process.env.APP_PORT || "http://localhost:8080",
+  APP_URL: process.env.APP_URL || "http://localhost:8080",
   APP_ENV: process.env.APP_ENV || "local",
   JWT_AUTH_TOKEN: process.env.JWT_AUTH_TOKEN || "secret",
   JWT_REFRESH_TOKEN: process.env.JWT_REFRESH_TOKEN || "secret",
