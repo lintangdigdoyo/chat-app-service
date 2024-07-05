@@ -1,10 +1,10 @@
 import { User } from "@prisma/client"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
+import { StatusCodes } from "http-status-codes"
 
 import { prismaClient } from "@/config/database"
 import ErrorException from "@/exceptions/ErrorException"
-import { StatusCodes } from "http-status-codes"
 import { env } from "@/config/env"
 import {
   generateAccessToken,
@@ -41,7 +41,12 @@ export default class UserService {
 
     const newUser = await prismaClient.user.create({ data })
 
-    return newUser
+    return {
+      id: newUser.id,
+      username: newUser.username,
+      email: newUser.email,
+      name: newUser.name,
+    }
   }
 
   static async login(data: LoginData) {
@@ -98,7 +103,7 @@ export default class UserService {
 
       return { message: "Logged out successfully" }
     } catch (err) {
-      throw new ErrorException("Forbidden", StatusCodes.FORBIDDEN)
+      throw new ErrorException()
     }
   }
 
@@ -136,7 +141,7 @@ export default class UserService {
 
       return { accessToken: newAccessToken, refreshToken: newRefreshToken }
     } catch (err) {
-      throw new ErrorException("Forbidden", StatusCodes.FORBIDDEN)
+      throw new ErrorException("Unauthorized", StatusCodes.UNAUTHORIZED)
     }
   }
 
@@ -151,9 +156,12 @@ export default class UserService {
       throw new ErrorException("User not found", StatusCodes.NOT_FOUND)
     }
 
-    const friend = await prismaClient.friend.findFirst({
+    const friend = await prismaClient.friend.findUnique({
       where: {
-        AND: { user_id: userId, friend_id: friendId },
+        user_id_friend_id: {
+          user_id: userId,
+          friend_id: friendId,
+        },
       },
     })
 
@@ -169,6 +177,57 @@ export default class UserService {
       },
     })
 
-    return { message: "User added successfully" }
+    return { message: "Friend added successfully" }
+  }
+
+  static async acceptFriend(userId: string, friendId: string) {
+    const user = await prismaClient.friend.findUnique({
+      where: {
+        user_id_friend_id: {
+          user_id: userId,
+          friend_id: friendId,
+        },
+      },
+    })
+
+    if (!user) {
+      throw new ErrorException("User not found", StatusCodes.NOT_FOUND)
+    }
+
+    if (user.accepted) {
+      throw new ErrorException("Friend request already accepted", StatusCodes.BAD_REQUEST)
+    }
+
+    await prismaClient.$transaction([
+      prismaClient.friend.update({
+        where: {
+          user_id_friend_id: {
+            user_id: userId,
+            friend_id: friendId,
+          },
+        },
+        data: {
+          accepted: true,
+        },
+      }),
+      prismaClient.friend.upsert({
+        where: {
+          user_id_friend_id: {
+            user_id: friendId,
+            friend_id: userId,
+          },
+        },
+        create: {
+          user_id: friendId,
+          friend_id: userId,
+          accepted: true,
+        },
+        update: {
+          accepted: true,
+        },
+      }),
+    ])
+
+    return { message: "Friend request accepted" }
   }
 }

@@ -9,11 +9,9 @@ export default class UserController {
     try {
       const user = req.body
 
-      await UserService.create(user)
+      const userData = await UserService.create(user)
 
-      res
-        .status(StatusCodes.CREATED)
-        .json({ status: StatusCodes.CREATED, message: "User created successfully" })
+      res.status(StatusCodes.CREATED).json({ message: "User created successfully", data: userData })
     } catch (err) {
       next(err)
     }
@@ -71,7 +69,7 @@ export default class UserController {
 
       const { message } = await UserService.logout(refreshToken)
 
-      res.status(StatusCodes.OK).json({ status: StatusCodes.OK, message })
+      res.status(StatusCodes.OK).json({ message })
     } catch (err) {
       next(err)
     }
@@ -81,6 +79,10 @@ export default class UserController {
     try {
       const friendId = req.params.id
       const userId = req.user?.id
+
+      if (!friendId) {
+        throw new ErrorException()
+      }
 
       if (friendId === userId) {
         throw new ErrorException("Cannot add user with the same id")
@@ -92,7 +94,32 @@ export default class UserController {
 
       const { message } = await UserService.addFriend(userId, friendId)
 
-      res.status(StatusCodes.OK).json({ status: StatusCodes.OK, message })
+      res.status(StatusCodes.OK).json({ message })
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  static async acceptFriend(req: Request, res: Response, next: NextFunction) {
+    try {
+      const friendId = req.params.friendId
+      const userId = req.user?.id
+
+      if (!friendId) {
+        throw new ErrorException()
+      }
+
+      if (friendId === userId) {
+        throw new ErrorException()
+      }
+
+      if (!userId) {
+        throw new ErrorException("Unauthorized", StatusCodes.UNAUTHORIZED)
+      }
+
+      const { message } = await UserService.acceptFriend(userId, friendId)
+
+      res.status(StatusCodes.OK).json({ message })
     } catch (err) {
       next(err)
     }

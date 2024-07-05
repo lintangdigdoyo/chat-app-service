@@ -4,6 +4,8 @@ import PublicController from "@/controllers/public.controller"
 
 const router = express.Router()
 
+router.get("/", PublicController.main)
+
 /**
  * @swagger
  * /ping:

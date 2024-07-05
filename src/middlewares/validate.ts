@@ -8,9 +8,7 @@ const validate =
     const { error } = schema.validate(req.body)
 
     if (error) {
-      return res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({ status: StatusCodes.BAD_REQUEST, message: error.message })
+      return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: error.message })
     }
     next()
   }

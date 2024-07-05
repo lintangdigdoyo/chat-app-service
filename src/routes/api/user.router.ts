@@ -29,14 +29,16 @@ const router = express.Router()
  *             schema:
  *               type: object
  *               properties:
- *                 status:
- *                   type: integer
- *                   description: http status code
- *                   example: 201
+ *                 success:
+ *                   type: boolean
+ *                   description: success status
+ *                   example: true
  *                 message:
  *                   type: string
  *                   description: create user message status
  *                   example: User created successfully
+ *                 data:
+ *                   $ref: '#/components/schemas/User'
  *
  */
 router.post("/", validate(userSchema), UserController.create)
@@ -63,6 +65,10 @@ router.post("/", validate(userSchema), UserController.create)
  *             schema:
  *               type: object
  *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   description: success status
+ *                   example: true
  *                 data:
  *                   type: object
  *                   properties:
@@ -91,10 +97,10 @@ router.post("/login", validate(loginSchema), UserController.login)
  *             schema:
  *               type: object
  *               properties:
- *                 status:
- *                   type: integer
- *                   description: http status code
- *                   example: 200
+ *                 success:
+ *                   type: boolean
+ *                   description: success status
+ *                   example: true
  *                 message:
  *                   type: string
  *                   description: logout message status
@@ -119,6 +125,10 @@ router.post("/logout", UserController.logout)
  *             schema:
  *               type: object
  *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   description: success status
+ *                   example: true
  *                 data:
  *                   type: object
  *                   properties:
@@ -154,16 +164,53 @@ router.post("/refresh", UserController.refresh)
  *             schema:
  *               type: object
  *               properties:
- *                 status:
- *                   type: integer
- *                   description: http status code
- *                   example: 200
+ *                 success:
+ *                   type: boolean
+ *                   description: success status
+ *                   example: true
  *                 message:
  *                   type: string
  *                   description: add friend message status
- *                   example: User added successfully
+ *                   example: Friend request added successfully
  *
  */
 router.post("/friends/:id", auth, UserController.addFriend)
+
+/**
+ * @swagger
+ * /v1/users/accept/{friendId}:
+ *   post:
+ *     summary: Accept a friend request
+ *     description: Accept a friend request
+ *     tags:
+ *       - User
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - name: friendId
+ *         in: path
+ *         required: true
+ *         description: friend's user id
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Message status
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   description: success status
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   description: friend requets message status
+ *                   example: Friend request accepted
+ *
+ */
+router.post("/accept/:friendId", auth, UserController.acceptFriend)
 
 export default router

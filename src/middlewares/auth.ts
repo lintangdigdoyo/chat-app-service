@@ -11,16 +11,16 @@ const auth: RequestHandler = (req: Request, res, next) => {
 
   if (!token) {
     return res.status(StatusCodes.UNAUTHORIZED).json({
-      status: StatusCodes.UNAUTHORIZED,
+      success: false,
       message: "Unauthorized",
     })
   }
 
   jwt.verify(token, env.JWT_AUTH_TOKEN, (err, user) => {
     if (err) {
-      return res.status(StatusCodes.FORBIDDEN).json({
-        status: StatusCodes.FORBIDDEN,
-        message: "Forbidden",
+      return res.status(StatusCodes.UNAUTHORIZED).json({
+        success: false,
+        message: "Unauthorized",
       })
     }
 
