@@ -10,6 +10,7 @@ import responseFormatter from "./middlewares/response-formatter"
 const app = express()
 
 app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 
 app.use(responseFormatter)

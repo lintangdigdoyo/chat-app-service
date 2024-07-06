@@ -1,6 +1,7 @@
 import express from "express"
 
 import userRouter from "./user.router"
+import groupRouter from "./group.router"
 
 const router = express.Router()
 
@@ -57,5 +58,24 @@ const router = express.Router()
  *
  */
 router.use("/users", userRouter)
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Group:
+ *       type: Object
+ *       properties:
+ *         id:
+ *           type: string
+ *           readOnly: true
+ *           description: id of the group
+ *           example: b56ee8a8-b842-4c2f-8e59-86bd0ee9ef3c
+ *         name:
+ *           type: string
+ *           description: name of the group
+ *
+ */
+router.use("/groups", groupRouter)
 
 export default router
