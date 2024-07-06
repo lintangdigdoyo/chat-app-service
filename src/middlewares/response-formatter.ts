@@ -12,6 +12,7 @@ const responseFormatter: RequestHandler = (_req, res, next) => {
 
   res.json = function (data: ResponseFormat) {
     const formattedResponse = {
+      ...data,
       success: data.success ?? true,
       message: data.message,
       data: data.data,

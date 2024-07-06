@@ -55,7 +55,6 @@ model Chat {
 model Group {
   id         String      @id @default(uuid())
   name       String      @db.VarChar(255)
-  user_id    String?
   users      UserGroup[]
   channels   Channel[]
   created_at DateTime    @default(now())
